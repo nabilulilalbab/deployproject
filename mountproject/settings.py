@@ -24,6 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
+# SECRET_KEY = 'django-insecure-s0_r&ua-f@#fn-jt(l5mq=sj$0!7pe__s=y7og559_5@!#yr!z'
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1',
     'http://localhost',
@@ -105,6 +106,13 @@ DATABASES = {
         'PORT': os.environ["PGPORT"],
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 
 CKEDITOR_ALLOW_NONIMAGE_FILES = False
 CKEDITOR_UPLOAD_PATH = "uploads/" 
