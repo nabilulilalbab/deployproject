@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block content %}
+<div class="px-6 py-10 max-w-7xl mx-auto">
+
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-3xl font-bold text-blue-500">📋 Dashboard Mitra</h2>
+    {% if toko %}
+    <a href="{% url 'toko:tambah_produk' %}"
+       class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow transition">
+       Tambah Produk
+    </a>
+    {% endif %}
+  </div>
+
+  {% if toko %}
+  <div class="bg-white rounded-2xl shadow-lg overflow-x-auto border border-blue-100">
+    <table class="min-w-full text-md text-left text-gray-700">
+      <thead class="bg-blue-100 text-blue-800 uppercase text-md sticky top-0 z-10">
+        <tr>
+          <th class="px-6 py-4">Foto</th>
+          <th class="px-6 py-4">Nama Produk</th>
+          <th class="px-6 py-4">Harga</th>
+          <th class="px-6 py-4">Status</th>
+          <th class="px-6 py-4 text-right">Aksi</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-blue-50 bg-white">
+        {% for p in produk %}
+        <tr class="hover:bg-blue-50 transition">
+          <td class="px-6 py-4">
+            {% if p.foto_produk %}
+              <img src="{{ p.foto_produk.url }}" alt="{{ p.nama }}"
+                   class="h-12 rounded cursor-pointer ring-2 ring-blue-100 hover:ring-blue-400 transition"
+                   onclick="showImageModal('{{ p.foto_produk.url }}')">
+            {% else %}
+              <span class="text-gray-400 italic">Tidak ada foto</span>
+            {% endif %}
+          </td>
+          <td class="px-6 py-4 font-medium">{{ p.nama }}</td>
+          <td class="px-6 py-4">Rp{{ p.harga|floatformat:0|intcomma }}</td>
+          <td class="px-6 py-4">
+            {% if p.is_active %}
+              <span class="text-green-600 font-semibold">Aktif</span>
+            {% else %}
+              <span class="text-red-500 font-semibold">Nonaktif</span>
+            {% endif %}
+          </td>
+          <td class="px-6 py-4 text-right space-x-2">
+            <a href="{% url 'toko:edit_produk' p.pk %}"
+               class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-lg shadow">
+               Edit
+            </a>
+            <a href="{% url 'toko:hapus_produk' p.pk %}"
+               class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg shadow">
+               Hapus
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="text-center py-6 text-gray-500 italic">
+            Belum ada produk.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% else %}
+  <div class="bg-blue-50 border border-blue-200 text-blue-700 rounded-2xl shadow-lg p-6 text-center animate-fadeInUp transition-all duration-500">
+    <div class="flex flex-col items-center gap-4">
+      <p class="text-lg font-medium">
+        ⚠️ Anda belum memiliki toko.
+      </p>
+      <a href="{% url 'toko:tambah_toko' %}"
+         class="inline-flex items-center gap-2 bg-blue-400 hover:bg-blue-500 text-white text-sm font-semibold px-5 py-2 rounded-full shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg">
+        Buat Toko Sekarang
+      </a>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+<!-- Modal Preview Gambar -->
+<div id="imageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 hidden">
+  <div class="relative max-w-3xl mx-auto animate-fade-in">
+    <button onclick="closeImageModal()"
+            class="absolute top-2 right-2 bg-white rounded-full p-1 shadow-md hover:bg-gray-100 z-50">
+      ❌
+    </button>
+    <img id="modalImage" src="" class="max-h-[90vh] rounded-lg shadow-lg">
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function showImageModal(imageUrl) {
+    const modal = document.getElementById('imageModal');
+    const img = document.getElementById('modalImage');
+    if (modal && img) {
+      img.src = imageUrl;
+      modal.classList.remove('hidden');
+    }
+  }
+
+  function closeImageModal() {
+    const modal = document.getElementById('imageModal');
+    const img = document.getElementById('modalImage');
+    if (modal && img) {
+      img.src = '';
+      modal.classList.add('hidden');
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById('imageModal');
+    if (modal) {
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) {
+          closeImageModal();
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}
+

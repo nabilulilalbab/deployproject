@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static form_tags %}
+{% block content %}
+    <div class="min-h-screen flex items-center justify-center px-4 py-8 bg-gray-50">
+        <div class="w-full max-w-xl bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-semibold text-center mb-6 text-gray-800">Beri Feedback</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="{{ form.email.id_for_label }}"
+                           class="block mb-1 text-sm font-medium text-gray-700">Email</label>
+                    {{ form.email|add_class:"w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300" }}
+                </div>
+                <div class="mb-4">
+                    <label for="{{ form.komentar.id_for_label }}"
+                           class="block mb-1 text-sm font-medium text-gray-700">Komentar</label>
+                    {{ form.komentar|add_class:"w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300" }}
+                </div>
+                <div class="mb-6">
+                    <label for="{{ form.rating.id_for_label }}"
+                           class="block mb-1 text-sm font-medium text-gray-700">Rating</label>
+                    {{ form.rating|add_class:"w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300" }}
+                </div>
+                <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded">Kirim</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

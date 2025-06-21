@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Leaflet CDN -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Hero Background Slider -->
+<section class="fixed inset-0 z-0"
+  x-data="{ currentSlide: 0, slides: [
+    '{% static 'images/bg-hero1.jpg' %}',
+    '{% static 'images/bg-hero2.jpg' %}',
+    '{% static 'images/bg-hero3.jpg' %}'
+  ] }"
+  x-init="setInterval(() => currentSlide = (currentSlide + 1) % slides.length, 5000)">
+  <div class="absolute w-full h-full bg-cover bg-center transition-all duration-1000"
+       :style="'background-image: url(' + slides[currentSlide] + ')'"></div>
+  <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+</section>
+
+<!-- Main Content -->
+<div class="relative z-10 max-w-6xl mx-auto px-6 py-16">
+  <div class="flex flex-col lg:flex-row gap-8 items-start">
+
+    <!-- Form + Peta -->
+    <div class="w-full lg:w-2/3 bg-white shadow-xl rounded-2xl p-8 text-sm animate-fadeInUp border border-blue-100">
+      <h2 class="text-xl font-semibold text-gray-700 mb-4 flex items-center gap-2">
+        🔍 Temukan Tempat Rental
+      </h2>
+
+      <form id="search-form" class="space-y-4">
+        <div>
+          <label for="searchBy" class="block font-medium text-gray-700">Cari Berdasarkan</label>
+          <select id="searchBy"
+                  class="mt-1 block w-full rounded-md border border-gray-300 px-2 py-1 focus:ring-blue-500 focus:border-blue-500 text-sm">
+            <option value="nama">Nama Toko</option>
+            <option value="kabupaten">Kabupaten</option>
+            <option value="lokasi">Lokasi Saya</option>
+          </select>
+        </div>
+
+        <div id="search-input-wrapper">
+          <label for="searchInput" class="block font-medium text-gray-700">Kata Kunci</label>
+          <input type="text" id="searchInput" name="searchInput" placeholder="Contoh: Toko Outdoor"
+                 class="mt-1 block w-full rounded-md border border-blue-400 px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-sm outline-none" />
+        </div>
+
+        <div id="radius-wrapper" class="hidden">
+          <label for="radius" class="block font-medium text-gray-700">Radius (km)</label>
+          <input type="number" id="radius" name="radius" value="25"
+                 class="mt-1 block w-full rounded-md border border-gray-300 px-2 py-1 focus:ring-blue-500 focus:border-blue-500 text-sm" />
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-2 pt-2">
+          <button type="button" id="btnLokasi" onclick="getCurrentLocationAndSearch()"
+                  class="hidden bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-md shadow text-sm font-medium">
+            📍 Cari Lokasi Saya
+          </button>
+          <button type="submit"
+                  class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-md shadow text-sm font-medium">
+            🔍 Cari
+          </button>
+        </div>
+      </form>
+
+      <!-- Peta -->
+      <div id="map" class="w-full h-72 mt-6 rounded-md border shadow-sm"></div>
+    </div>
+
+    <!-- Hasil -->
+    <div class="w-full lg:w-1/3 bg-white rounded-2xl p-6 shadow-inner border border-blue-200 self-start">
+      <h3 class="text-xl font-semibold text-blue-600 mb-4">📍 Hasil Pencarian</h3>
+      <ul id="hasil" class="space-y-3">
+        <li class="text-gray-500 text-sm">Silakan isi form pencarian.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Script -->
+<script>
+  const map = L.map('map').setView([-7.05, 110.4], 10);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+  let markers = [];
+
+  function tampilkanHasil(data) {
+    const hasil = document.getElementById('hasil');
+    hasil.innerHTML = "";
+    markers.forEach(marker => map.removeLayer(marker));
+    markers = [];
+
+    if (!data.hasil || data.hasil.length === 0) {
+      hasil.innerHTML = "<li class='text-gray-600'>Tidak ada hasil ditemukan</li>";
+      return;
+    }
+
+    data.hasil.forEach(toko => {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <a href="/toko/toko/${toko.id}/"
+           class="block p-3 bg-white rounded-md border shadow-sm hover:bg-blue-50 hover:shadow-md transition">
+          <div class="font-semibold text-blue-700 text-base">${toko.nama}</div>
+          <div class="text-sm text-gray-700">${toko.alamat}</div>
+          <div class="text-sm text-gray-500">${toko.kabupaten} (${toko.jarak ?? '-'} km)</div>
+        </a>`;
+      hasil.appendChild(li);
+
+      const marker = L.marker([toko.latitude, toko.longitude])
+        .bindPopup(`<b>${toko.nama}</b><br>${toko.alamat}<br>${toko.kabupaten}`);
+      marker.addTo(map);
+      markers.push(marker);
+    });
+  }
+
+  document.getElementById("searchBy").addEventListener("change", function () {
+    const mode = this.value;
+    document.getElementById("search-input-wrapper").classList.toggle("hidden", mode === "lokasi");
+    document.getElementById("radius-wrapper").classList.toggle("hidden", mode !== "lokasi");
+    document.getElementById("btnLokasi").classList.toggle("hidden", mode !== "lokasi");
+  });
+
+  document.getElementById("search-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const mode = document.getElementById("searchBy").value;
+    const keyword = document.getElementById("searchInput").value.trim();
+
+    if (mode === "lokasi") return;
+
+    let url = `/toko/cari/?`;
+    if (mode === "nama") url += `nama=${encodeURIComponent(keyword)}`;
+    if (mode === "kabupaten") url += `kabupaten=${encodeURIComponent(keyword)}`;
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => tampilkanHasil(data))
+      .catch(err => alert("Gagal fetch data: " + err.message));
+  });
+
+  function getCurrentLocationAndSearch() {
+    const radius = document.getElementById("radius").value;
+
+    if (!navigator.geolocation) {
+      alert("Geolocation tidak tersedia");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(pos => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      const url = `/toko/cari/?lat=${lat}&lon=${lon}&radius=${radius}`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => tampilkanHasil(data))
+        .catch(err => alert("Gagal fetch lokasi: " + err.message));
+    }, err => {
+      alert("Gagal mendapatkan lokasi: " + err.message);
+    });
+  }
+</script>
+
+{% endblock %}

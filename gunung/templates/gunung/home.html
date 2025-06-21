@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block extra_scripts %}<script defer src="https://unpkg.com/alpinejs@3.12.0/dist/cdn.min.js"></script>{% endblock %}
+{% load static %}
+{% block content %}
+    <main class="relative top-0 overflow-hidden">
+        <!-- Hero Slider -->
+        <section class="min-h-screen relative"
+                 x-data="{ currentSlide: 0, slides: [ '{% static 'images/bg-hero1.jpg' %}', '{% static 'images/bg-hero2.jpg' %}', '{% static 'images/bg-hero3.jpg' %}' ] }"
+                 x-init="setInterval(() => currentSlide = (currentSlide + 1) % slides.length, 5000)">
+            <!-- Background Image -->
+            <div class="absolute inset-0 bg-cover bg-center transition-all duration-1000"
+                 :style="'background-image: url(' + slides[currentSlide] + ')'"></div>
+            <!-- Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent z-0"></div>
+            <!-- Hero Content -->
+            <div class="relative z-10 flex flex-col items-center text-white text-center min-h-screen pt-28 pb-12 px-6 sm:px-10">
+                <!-- MountInfo Header -->
+                <div class="flex flex-col sm:flex-row gap-2 justify-center items-center bg-blue-500 bg-opacity-70 px-4 py-2 rounded-xl shadow-md mb-6">
+                    <h1 class="font-bold text-white">MountInfo</h1>
+                    <p class="text-sm">Informasi Gunung & Penyewaan Alat Mendaki</p>
+                </div>
+                <!-- Hero Title -->
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold drop-shadow-lg mb-4 leading-snug">
+                    Selamat datang di <span class="text-blue-300">
+                    MountInfo
+                    {% if user.is_authenticated %}, {{ user.username }}{% endif %}
+                </span>
+            </h1>
+            <p class="text-base sm:text-lg md:text-xl max-w-2xl animate-fadeInUp delay-300 mb-10">
+                Temukan informasi gunung dan alat pendakian terbaik untuk petualanganmu
+            </p>
+            <!-- Card Section -->
+            <div class="flex flex-col md:flex-row gap-6 justify-center items-center w-full max-w-5xl">
+                <!-- Eksplor Gunung -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg w-full md:w-[45%] hover:scale-105 transition duration-300">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">
+                        <a href="{% url 'gunung:daftar' %}"
+                           class="inline-block bg-blue-400 text-white px-4 py-1 rounded-xl hover:bg-blue-600 transition">
+                            Eksplor Gunung
+                        </a>
+                    </h3>
+                    <p class="text-gray-600">Cari tahu info gunung, jalur pendakian, cuaca, dan checklist alat yang direkomendasikan.</p>
+                </div>
+                <!-- Sewa Alat -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg w-full md:w-[45%] hover:scale-105 transition duration-300">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">
+                        <a href="{% url 'toko:toko_leaflet_page' %}"
+                           class="inline-block bg-blue-400 text-white px-4 py-1 rounded-xl hover:bg-blue-600 transition">
+                            Sewa Alat Pendakian
+                        </a>
+                    </h3>
+                    <p class="text-gray-600">Butuh carrier, tenda, atau headlamp? Sewa alat langsung dari mitra terpercaya.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

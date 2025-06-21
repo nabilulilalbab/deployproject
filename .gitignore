@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.p~
+
+
+# Virtual environment
+env/
+venv/
+ENV/
+.venv/
+.ENV/
+
+# VS Code / IDE
+.vscode/
+.idea/
+*.swp
+
+# Django
+*.log
+*.pot
+*.pyc
+local_settings.py
+db.sqlite3
+static/            # jika generate sendiri dan tidak dikelola via Git
+.DS_Store
+
+# Env files
+.env
+.env.*
+
+# Gunicorn
+gunicorn.log
+
+# MacOS
+.DS_Store
+
+# Railway-specific (jika generate file tertentu)
+railway.json

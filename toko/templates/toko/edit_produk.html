@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load form_filters %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto py-12 px-6 flex flex-col lg:flex-row gap-6">
+  <!-- Form Card -->
+  <div class="w-full lg:w-2/3">
+    <div class="bg-white rounded-3xl p-8 shadow-xl border border-blue-100 animate-fadeInUp">
+      <h2 class="text-3xl font-bold text-blue-500 mb-6 text-center">
+        {% if form.instance.pk %}
+          Edit Produk
+        {% else %}
+          Tambah Produk
+        {% endif %}
+      </h2>
+
+      <form method="POST" enctype="multipart/form-data" class="space-y-5">
+        {% csrf_token %}
+
+        <!-- Nama -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nama Produk</label>
+          {{ form.nama|add_class:"w-full px-4 py-3 rounded-2xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm transition-all" }}
+          <script>document.getElementById("id_nama").setAttribute("onfocus", "setHelp('nama')")</script>
+        </div>
+
+        <!-- Deskripsi -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
+          {{ form.deskripsi|add_class:"w-full px-4 py-3 rounded-2xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm transition-all" }}
+          <script>document.getElementById("id_deskripsi").setAttribute("onfocus", "setHelp('deskripsi')")</script>
+        </div>
+
+        <!-- Harga -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Harga</label>
+          {{ form.harga|add_class:"w-full px-4 py-3 rounded-2xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm transition-all" }}
+          <script>document.getElementById("id_harga").setAttribute("onfocus", "setHelp('harga')")</script>
+        </div>
+
+        <!-- Foto Produk -->
+<div>
+  <label class="block text-sm font-medium text-gray-700 mb-1">Foto Produk</label>
+  {% if form.instance.foto_produk %}
+    <img src="{{ form.instance.foto_produk.url }}" alt="Foto Produk" class="h-32 rounded mb-3">
+  {% else %}
+    <p class="text-sm text-gray-400 italic mb-2">Belum ada foto</p>
+  {% endif %}
+  {{ form.foto_produk|add_class:"w-full px-4 py-2 rounded-2xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm transition-all" }}
+</div>
+
+
+        <!-- Status -->
+        <div>
+          <label class="inline-flex items-center">
+            {{ form.is_active|add_class:"mr-2" }}
+            <span class="text-sm font-medium text-gray-700">Aktifkan Produk</span>
+          </label>
+          <script>document.getElementById("id_is_active").setAttribute("onfocus", "setHelp('is_active')")</script>
+        </div>
+
+
+
+        <!-- Submit -->
+        <div class="text-center pt-6">
+          <button type="submit"
+            class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold px-6 py-3 rounded-full shadow transition duration-300 hover:scale-105">
+            Simpan Produk
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Petunjuk -->
+  <div class="w-full lg:w-1/3 self-start bg-blue-50 rounded-2xl p-6 shadow-inner border border-blue-200 h-fit">
+    <h3 class="text-xl font-semibold text-blue-600 mb-3">📝 Petunjuk Pengisian</h3>
+    <p id="help-text" class="text-gray-700 leading-relaxed">
+      Arahkan kursor ke salah satu input untuk melihat petunjuk pengisian di sini.
+    </p>
+  </div>
+</div>
+
+<script>
+  const helpText = {
+    nama: "Masukkan nama produk. Contoh: 'Carrier 60L Waterproof'.",
+    deskripsi: "Tulis deskripsi yang menjelaskan keunggulan, ukuran, dan fungsi produk.",
+    harga: "Masukkan harga produk dalam angka. Contoh: 150000.",
+    is_active: "Centang jika produk ini tersedia untuk ditampilkan dan disewa.",
+  };
+
+  function setHelp(field) {
+    const el = document.getElementById("help-text");
+    el.textContent = helpText[field] || "Isi formulir dengan benar untuk menyimpan produk.";
+  }
+</script>
+{% endblock %}
