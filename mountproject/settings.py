@@ -30,9 +30,9 @@ CSRF_TRUSTED_ORIGINS = [
     'https://deployproject-production-e7b4.up.railway.app'
 ]
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["*","deployproject-production-e7b4.up.railway.app"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "*","deployproject-production-e7b4.up.railway.app"]
 
 
 # Application definition
