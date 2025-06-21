@@ -27,6 +27,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1',
     'http://localhost',
+    'https://deployproject.railway.internal'
 ]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
