@@ -94,7 +94,7 @@ WSGI_APPLICATION = 'mountproject.wsgi.application'
 # Set default values for the environment variables if they’re not already set
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.environ["PGDATABASE"],
         'USER': os.environ["PGUSER"],
         'PASSWORD': os.environ["PGPASSWORD"],
