@@ -18,6 +18,7 @@
         <style>
             body { font-family: 'Nunito Sans', sans-serif; }
             [x-cloak] { display: none !important; }
+            
             @keyframes fadeInUp {
                 from { opacity: 0; transform: translateY(20px); }
                 to { opacity: 1; transform: translateY(0); }
@@ -31,13 +32,16 @@
           class="bg-slate-900 text-slate-800 flex flex-col min-h-screen">
         <div class="fixed top-0 left-0 w-full h-full -z-10"
              x-data="{ currentSlide: 0, slides: [ 'https://res.cloudinary.com/dfqjbuojp/image/upload/v1750611623/bg-hero2_optimized_2000_qhla0s.jpg', 'https://res.cloudinary.com/dfqjbuojp/image/upload/v1750611623/bg-hero3_optimized_2000_fmd8pu.jpg', 'https://res.cloudinary.com/dfqjbuojp/image/upload/v1750611619/bg-hero1_optimized_2000_ehfspl.jpg' ] }"
-             x-init="setInterval(() => currentSlide = (currentSlide + 1) % slides.length, 5000)">
-            <template x-for="(slide, index) in slides" :key="index">
-                <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
-                     :style="'background-image: url(' + slide + ')'"
-                     x-show="currentSlide === index"
-                     x-transition></div>
-            </template>
+             x-init="setInterval(() => { currentSlide = (currentSlide + 1) % slides.length }, 6000)">
+            <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-3000 ease-in-out"
+                 :style="{ 'background-image': `url('${slides[0]}')` }"
+                 :class="{ 'opacity-100': currentSlide === 0, 'opacity-0': currentSlide !== 0 }"></div>
+            <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-3000 ease-in-out"
+                 :style="{ 'background-image': `url('${slides[1]}')` }"
+                 :class="{ 'opacity-100': currentSlide === 1, 'opacity-0': currentSlide !== 1 }"></div>
+            <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-3000 ease-in-out"
+                 :style="{ 'background-image': `url('${slides[2]}')` }"
+                 :class="{ 'opacity-100': currentSlide === 2, 'opacity-0': currentSlide !== 2 }"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
         </div>
         {% include "navbar.html" %}
@@ -51,7 +55,6 @@
         </main>
         {% include "footer.html" %}
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-        {% block extra_scripts %}
-        {% endblock %}
+        {% block extra_scripts %}{% endblock %}
     </body>
 </html>

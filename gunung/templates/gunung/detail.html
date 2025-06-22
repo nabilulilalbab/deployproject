@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
 {% load form_tags %}
+{% load humanize %}
 {% block title %}{{ gunung.nama }} - MountInfo{% endblock %}
-{# KOSONGKAN HERO BLOCK agar tidak ada area kosong di atas #}
+{# Kosongkan hero block agar halaman ini memiliki layout uniknya sendiri #}
 {% block hero_content %}
 {% endblock hero_content %}
 {% block content %}
+    <div class="fixed inset-0 bg-slate-900 -z-10"></div>
     {# Wrapper utama untuk halaman detail, memastikan konten mulai dari atas #}
     <div class="w-full">
         <header class="relative h-[60vh] min-h-[400px] w-full flex items-center justify-center text-center">
@@ -102,7 +104,7 @@
                                 </div>
                                 <div class="flex-1">
                                     <p class="font-semibold text-white">{{ komen.user.username }}</p>
-                                    <p class="text-sm text-slate-400 mb-2">{{ komen.created_at|date:"d M Y, H:i" }}</p>
+                                    <p class="text-xs text-slate-400 mt-0.5 mb-2">{{ komen.created_at|date:"d M Y, H:i" }}</p>
                                     <div class="prose prose-invert max-w-none text-slate-300">{{ komen.isi|linebreaks }}</div>
                                 </div>
                                 <div class="flex-shrink-0 flex items-center gap-1 text-sm text-amber-400">

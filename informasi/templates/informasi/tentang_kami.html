@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}{{ page.title }} - MountInfo{% endblock %}
-{% block hero_content %}{% endblock %}
+{# Kosongkan hero block agar halaman ini memiliki layout uniknya sendiri #}
+{% block hero_content %}
+{% endblock hero_content %}
 {% block content %}
+    <div class="fixed inset-0 bg-slate-900 -z-10"></div>
     <div class="w-full">
         <header class="relative h-[60vh] min-h-[400px] w-full flex items-center justify-center text-center">
             <div class="absolute inset-0">
