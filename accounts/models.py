@@ -12,8 +12,8 @@ class User(AbstractUser):
     no_hp = models.CharField(max_length=20, blank=True)
     alamat = models.TextField(blank=True)
     nik = models.CharField("Nomor KTP", max_length=20, blank=True)
-    foto_ktp = models.ImageField(upload_to='ktp/', blank=True, null=True)
-    selfie_ktp = models.ImageField(upload_to='selfie_ktp/', blank=True, null=True)
+    foto_ktp = models.ImageField(upload_to='ktp/')
+    selfie_ktp = models.ImageField(upload_to='selfie_ktp/')
     tanggal_lahir = models.DateField(blank=True, null=True)
     is_verified = models.BooleanField(default=False)
 
