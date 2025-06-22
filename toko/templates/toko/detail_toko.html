@@ -1,208 +1,234 @@
-
 {% extends "base.html" %}
-{% block extra_scripts %}
-
-{% endblock %}
+{% load static %}
 {% load humanize %}
-
+{% load form_tags %}
+{% block title %}{{ toko.nama }} - MountInfo{% endblock %}
+{% block hero_content %}
+{% endblock hero_content %}
 {% block content %}
-<div class="max-w-5xl mx-auto px-4 py-10">
-
-  <!-- Info Toko -->
-  <div class="bg-gradient-to-br from-blue-100 to-blue-50 border border-blue-200 rounded-2xl shadow p-6 mb-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-    <div>
-      <h2 class="text-3xl font-extrabold text-blue-800 mb-1 tracking-tight">{{ toko.nama }}</h2>
-      <p class="text-gray-600 text-sm">{{ toko.alamat }} - {{ toko.kabupaten }}</p>
-    </div>
-    <div class="flex items-center gap-3">
-      <span class="inline-flex items-center bg-blue-200 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full shadow-sm">
-        <svg class="w-4 h-4 mr-1 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 01-8 0m8 0a4 4 0 00-8 0m8 0V5a2 2 0 00-2-2H8a2 2 0 00-2 2v2m10 0v2a2 2 0 01-2 2H8a2 2 0 01-2-2V7"></path>
-        </svg>
-        Mitra Resmi
-      </span>
-      <a href="https://wa.me/{{ toko.user.no_hp }}" target="_blank"
-         class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-full text-sm font-semibold shadow transition">
-        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M17.472 14.382c..."/>
-        </svg>
-        Chat Mitra
-      </a>
-    </div>
-  </div>
-
-  <!-- Form Pencarian -->
-  <form method="get" class="mb-8 flex flex-col sm:flex-row gap-2 items-start sm:items-center">
-    <input type="text" name="q" value="{{ query|default_if_none:'' }}"
-           placeholder="Cari produk..." 
-           class="w-full sm:w-auto flex-1 border border-blue-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition shadow-sm text-sm">
-    <button type="submit"
-            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow text-sm transition">
-      Cari
-    </button>
-  </form>
-
-  <!-- Form Produk WA -->
-  <form action="https://wa.me/{{ toko.user.no_hp }}" method="get" target="_blank" onsubmit="return submitWhatsAppForm(this);">
-    <div class="space-y-4">
-      {% for p in produk %}
-        <div class="group flex flex-col md:flex-row items-start gap-4 p-4 rounded-xl border border-blue-100 bg-white/70 backdrop-blur-sm shadow hover:shadow-md transition">
-          
-          <!-- Gambar -->
-          <div class="w-full md:w-28 flex-shrink-0">
-            {% if p.foto_produk %}
-              <div class="relative">
-                <img src="{{ p.foto_produk.url }}" alt="{{ p.nama }}"
-                     class="w-full h-28 object-cover rounded-lg ring-1 ring-blue-100 group-hover:ring-blue-400 cursor-pointer transition"
-                     onclick="showImageModal('{{ p.foto_produk.url }}')">
-                <span class="absolute bottom-1 right-1 bg-white text-blue-600 text-xs px-2 py-0.5 rounded shadow-sm hidden md:inline-block group-hover:inline-block">Preview</span>
-              </div>
-            {% else %}
-              <div class="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">
-                No Image
-              </div>
-            {% endif %}
-          </div>
-
-          <!-- Info Produk -->
-          <div class="flex-1 space-y-1 w-full">
-            <div class="flex justify-between items-start">
-              <div>
-                <p class="font-semibold text-blue-800 text-base">{{ p.nama }}</p>
-                <p class="text-blue-500 font-semibold text-sm">Rp{{ p.harga|floatformat:0|intcomma }}</p>
-              </div>
-              <input type="checkbox" name="produk" value="{{ p.nama }}" class="mt-1 accent-green-600 scale-110">
+    <div class="w-full pt-28 sm:pt-32 pb-16 px-4 sm:px-6 lg:px-8">
+        <div class="w-full max-w-5xl mx-auto bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-6 md:p-8">
+            <div class="flex flex-col md:flex-row justify-between items-start gap-4 mb-8 border-b border-slate-700 pb-6">
+                <div>
+                    <h1 class="text-3xl lg:text-4xl font-extrabold text-white tracking-tight">{{ toko.nama }}</h1>
+                    <p class="text-slate-300 mt-1 text-sm">{{ toko.alamat }} - {{ toko.kabupaten }}</p>
+                </div>
+                <div class="flex items-center gap-3 flex-shrink-0 pt-2">
+                    <span class="inline-flex items-center bg-blue-500/20 text-blue-300 text-xs font-semibold px-3 py-1 rounded-full">
+                        <svg class="w-4 h-4 mr-1.5"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke-width="1.5"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        Mitra Resmi
+                    </span>
+                    <a href="https://wa.me/{{ toko.user.no_hp }}"
+                       target="_blank"
+                       class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-lg shadow-lg transition-all duration-300 hover:shadow-green-500/50 text-sm">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M17.472 14.382c..." />
+                        </svg>
+                        Chat Mitra
+                    </a>
+                </div>
             </div>
-            <div x-data="{ expanded: false }" class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-              <span x-show="!expanded">{{ p.deskripsi|truncatechars:120 }}</span>
-              <span x-show="expanded" x-text="'{{ p.deskripsi|escapejs }}'"></span>
-              {% if p.deskripsi|length > 120 %}
-              <button type="button"
-                      class="ml-2 text-blue-500 hover:underline font-semibold text-xs"
-                      @click="expanded = !expanded"
-                      x-text="expanded ? 'Sembunyikan' : 'Lihat Selengkapnya'"></button>
-              {% endif %}
+            <form method="get" class="mb-8">
+                <input type="text"
+                       name="q"
+                       value="{{ query|default_if_none:'' }}"
+                       placeholder="Cari produk di toko ini..."
+                       class="w-full bg-slate-800/70 text-white placeholder-slate-400 border border-slate-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 rounded-lg px-4 py-2.5 outline-none transition">
+            </form>
+            <form action="https://wa.me/{{ toko.user.no_hp }}"
+                  method="get"
+                  target="_blank"
+                  onsubmit="return submitWhatsAppForm(this);">
+                <div class="space-y-4">
+                    {% for p in produk %}
+                        <div class="group flex flex-col md:flex-row items-start gap-4 p-4 rounded-xl border border-slate-700 bg-slate-800/50 hover:border-blue-500/50 transition-colors duration-300">
+                            <div class="w-full md:w-32 flex-shrink-0">
+                                {% if p.foto_produk %}
+                                    <div class="relative">
+                                        <img src="{{ p.foto_produk.url }}"
+                                             alt="{{ p.nama }}"
+                                             class="w-full h-32 object-cover rounded-lg ring-1 ring-slate-700 cursor-pointer"
+                                             onclick="showImageModal('{{ p.foto_produk.url }}')">
+                                        <span class="absolute bottom-1 right-1 bg-black/50 text-white text-xs px-2 py-0.5 rounded-full backdrop-blur-sm hidden group-hover:inline-block">Preview</span>
+                                    </div>
+                                {% else %}
+                                    <div class="w-full h-32 bg-slate-700 rounded-lg flex items-center justify-center text-xs text-slate-500">No Image</div>
+                                {% endif %}
+                            </div>
+                            <div class="flex-1 w-full">
+                                <div class="flex justify-between items-start gap-4">
+                                    <div>
+                                        <p class="font-semibold text-white text-lg">{{ p.nama }}</p>
+                                        <p class="text-blue-400 font-semibold text-base">Rp{{ p.harga|floatformat:0|intcomma }}</p>
+                                    </div>
+                                    <label class="flex-shrink-0 flex items-center space-x-2 p-2 cursor-pointer">
+                                        <span class="text-sm font-medium text-slate-200">Sewa</span>
+                                        <input type="checkbox"
+                                               name="produk"
+                                               value="{{ p.nama|escapejs }}"
+                                               class="h-5 w-5 rounded border-slate-500 bg-slate-700 text-green-500 focus:ring-green-500/50 accent-green-500">
+                                    </label>
+                                </div>
+                                <div x-data="{ expanded: false }"
+                                     class="text-sm text-slate-300 mt-2 leading-relaxed whitespace-pre-line">
+                                    <span x-show="!expanded">{{ p.deskripsi|truncatechars:120 }}</span>
+                                    <span x-show="expanded" x-cloak>{{ p.deskripsi|safe }}</span>
+                                    {% if p.deskripsi|length > 120 %}
+                                        <button type="button"
+                                                class="text-blue-400 hover:underline font-semibold text-xs"
+                                                @click="expanded = !expanded"
+                                                x-text="expanded ? 'Sembunyikan' : 'Lihat Selengkapnya'"></button>
+                                    {% endif %}
+                                </div>
+                                <span class="inline-block mt-2 px-2.5 py-0.5 rounded-full text-xs font-semibold {% if p.is_active %} bg-green-500/20 text-green-300 {% else %} bg-red-500/20 text-red-300 {% endif %}">
+                                    {% if p.is_active %}
+                                        Tersedia
+                                    {% else %}
+                                        Tidak Tersedia
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="text-center text-slate-400 py-8">Toko ini belum memiliki produk.</p>
+                    {% endfor %}
+                </div>
+                <div class="mt-8 text-center">
+                    <button type="submit"
+                            class="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-lg shadow-lg transition-all duration-300 hover:shadow-green-500/50">
+                        ✅ Sewa via WhatsApp
+                    </button>
+                </div>
+            </form>
+            <hr class="my-10 border-slate-700">
+            <div class="mt-12">
+                <h3 class="text-2xl font-bold text-white mb-8">Ulasan Pengguna</h3>
+                {% if user.is_authenticated %}
+                    <form method="post"
+                          class="bg-slate-800/50 border border-slate-700 p-5 rounded-xl mb-10 space-y-4">
+                        {% csrf_token %}
+                        <div>
+                            <label for="{{ form_komentar.isi.id_for_label }}"
+                                   class="block text-sm font-medium text-slate-300 mb-2">Beri Ulasan Anda</label>
+                            {{ form_komentar.isi|add_class:"w-full bg-slate-700 text-slate-200 border-slate-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" }}
+                        </div>
+                        <div>
+                            <label for="{{ form_komentar.rating.id_for_label }}"
+                                   class="block text-sm font-medium text-slate-300 mb-2">Rating (1–5)</label>
+                            {{ form_komentar.rating|add_class:"w-24 bg-slate-700 text-slate-200 border-slate-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" }}
+                        </div>
+                        <button type="submit"
+                                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg transition font-semibold">
+                            Kirim Ulasan
+                        </button>
+                    </form>
+                {% else %}
+                    <div class="bg-slate-800 text-center p-6 rounded-xl border border-slate-700 mb-10">
+                        <p class="text-slate-300">
+                            <a href="{% url 'accounts:login_user' %}"
+                               class="font-semibold text-blue-400 underline hover:text-blue-300">Login</a> untuk memberikan ulasan.
+                        </p>
+                    </div>
+                {% endif %}
+                <div class="space-y-6">
+                    {% for k in komentar %}
+                        <div class="flex items-start gap-4 p-5 bg-slate-800/50 rounded-lg border border-slate-700">
+                            <div class="flex-shrink-0 w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center font-bold text-slate-300 ring-2 ring-slate-600">
+                                {{ k.user.username|first|upper }}
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center">
+                                    <p class="font-semibold text-white">{{ k.user.username }}</p>
+                                    <div class="flex items-center text-sm text-amber-400">
+                                        {% for i in "12345"|slice:"k.rating:" %}☆{% endfor %}
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-400 mt-0.5 mb-2">{{ k.tanggal|date:"d M Y, H:i" }}</p>
+                                <div class="prose prose-sm prose-invert max-w-none text-slate-300">{{ k.isi|linebreaks }}</div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="text-slate-500 italic text-center py-4">Belum ada ulasan untuk toko ini.</p>
+                    {% endfor %}
+                </div>
             </div>
-            <span class="inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-semibold 
-              {% if p.is_active %}
-                bg-green-100 text-green-700
-              {% else %}
-                bg-red-100 text-red-700
-              {% endif %}">
-              {% if p.is_active %}Aktif{% else %}Nonaktif{% endif %}
-            </span>
-          </div>
         </div>
-      {% empty %}
-        <p class="text-center text-gray-500">Belum ada produk yang tersedia.</p>
-      {% endfor %}
     </div>
-
-    <!-- Tombol WA -->
-    <div class="mt-8 text-center">
-      <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-full shadow transition">
-        ✅ Sewa via WhatsApp
-      </button>
+    <div id="imageModal"
+         class="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-80 backdrop-blur-sm hidden">
+        <div class="relative max-w-4xl max-h-[90vh] mx-auto">
+            <button onclick="closeImageModal()"
+                    class="absolute -top-4 -right-4 bg-white rounded-full p-2 shadow-lg hover:bg-gray-200 z-50 transition transform hover:scale-110">
+                <svg class="w-6 h-6 text-gray-800"
+                     xmlns="http://www.w3.org/2000/svg"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <img id="modalImage"
+                 src=""
+                 class="w-full max-w-3xl max-h-[90vh] object-contain rounded-lg shadow-2xl">
+        </div>
     </div>
-  </form>
-
-  <!-- Modal Preview Gambar -->
-  <div id="imageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 hidden">
-    <div class="relative max-w-3xl mx-auto">
-      <button onclick="closeImageModal()"
-              class="absolute top-2 right-2 bg-white rounded-full p-1 shadow-md hover:bg-gray-100 z-50">
-        ❌
-      </button>
-      <img id="modalImage" src="" class="max-h-[90vh] rounded-lg shadow-lg">
-    </div>
-  </div>
-
-  <!-- Komentar dan Rating -->
-  <hr class="my-10">
-  <h3 class="text-xl font-bold text-gray-800 mb-4">Ulasan Pengguna</h3>
-
-  {% for k in komentar %}
-    <div class="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200 shadow-sm">
-      <div class="flex justify-between items-center mb-1">
-        <p class="font-semibold text-blue-700">{{ k.user.username }}</p>
-        <p class="text-yellow-500 text-sm">
-          {% for i in "12345"|slice:":k.rating" %}★{% endfor %}
-          {% for i in "12345"|slice:"k.rating:" %}☆{% endfor %}
-        </p>
-      </div>
-      <p class="text-sm text-gray-700">{{ k.isi }}</p>
-      <p class="text-xs text-gray-400 mt-1">{{ k.tanggal|date:"d M Y, H:i" }}</p>
-    </div>
-  {% empty %}
-    <p class="text-gray-500">Belum ada komentar.</p>
-  {% endfor %}
-
-  {% if user.is_authenticated %}
-    <form method="post" class="mt-6 space-y-4">
-      {% csrf_token %}
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Komentar</label>
-        {{ form_komentar.isi }}
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Rating (1–5)</label>
-        {{ form_komentar.rating }}
-      </div>
-      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded shadow transition">
-        Kirim Komentar
-      </button>
-    </form>
-  {% else %}
-    <p class="text-sm text-gray-500 mt-4">
-      <a href="{% url 'accounts:login' %}" class="text-blue-500 hover:underline">Login</a> untuk memberikan komentar.
-    </p>
-  {% endif %}
-
-</div>
-
-<script>
-  function showImageModal(imageUrl) {
-    const modal = document.getElementById('imageModal');
-    const img = document.getElementById('modalImage');
-    if (modal && img) {
-      img.src = imageUrl;
-      modal.classList.remove('hidden');
-    }
-  }
-
-  function closeImageModal() {
-    const modal = document.getElementById('imageModal');
-    const img = document.getElementById('modalImage');
-    if (modal && img) {
-      img.src = '';
-      modal.classList.add('hidden');
-    }
-  }
-
-  document.addEventListener("DOMContentLoaded", function () {
-    const modal = document.getElementById('imageModal');
-    if (modal) {
-      modal.addEventListener('click', function (e) {
-        if (e.target === modal) {
-          closeImageModal();
-        }
-      });
-    }
-  });
-
-  function submitWhatsAppForm(form) {
-    const checked = [...form.querySelectorAll('input[name="produk"]:checked')];
-    if (checked.length === 0) {
-      alert("Pilih setidaknya satu produk!");
-      return false;
-    }
-
-    const produkList = checked.map(cb => `- ${cb.value}`).join('%0A');
-    const pesan = `Halo, saya ingin menyewa alat berikut:%0A${produkList}`;
-    const nomor = form.action;
-    window.open(`${nomor}?text=${pesan}`, '_blank');
-    return false;
-  }
-</script>
 {% endblock %}
+{% block extra_scripts %}
+    <script>
+    function showImageModal(imageUrl) {
+        const modal = document.getElementById('imageModal');
+        const img = document.getElementById('modalImage');
+        if (modal && img) {
+            img.src = imageUrl;
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
+    }
 
+    function closeImageModal() {
+        const modal = document.getElementById('imageModal');
+        const img = document.getElementById('modalImage');
+        if (modal && img) {
+            img.src = '';
+            modal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const modal = document.getElementById('imageModal');
+        if (modal) {
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) {
+                    closeImageModal();
+                }
+            });
+            document.addEventListener('keydown', function(event) {
+                if (event.key === "Escape") {
+                    closeImageModal();
+                }
+            });
+        }
+    });
+
+    function submitWhatsAppForm(form) {
+        const checked = [...form.querySelectorAll('input[name="produk"]:checked')];
+        if (checked.length === 0) {
+            alert("Pilih setidaknya satu produk!");
+            return false;
+        }
+
+        const produkList = checked.map(cb => `- ${cb.value}`).join('%0A');
+        const pesan = `Halo, saya ingin menyewa alat berikut:%0A${produkList}`;
+        const nomor = form.action;
+        window.open(`${nomor}?text=${pesan}`, '_blank');
+        return false;
+    }
+    </script>
+{% endblock %}

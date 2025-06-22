@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'toko',  # Custom app for the shop
     'ckeditor',
     'ckeditor_uploader',
-    'django.contrib.humanize'
+    'django.contrib.humanize',
+    'informasi'
 ]
 
 

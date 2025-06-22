@@ -1,104 +1,139 @@
 {% extends "base.html" %}
 {% load humanize %}
-
+{% block title %}Dashboard Mitra - MountInfo{% endblock %}
+{# Kosongkan hero block agar halaman langsung menampilkan konten dashboard #}
+{% block hero_content %}
+{% endblock hero_content %}
 {% block content %}
-<div class="px-6 py-10 max-w-7xl mx-auto">
-
-  <div class="flex justify-between items-center mb-6">
-    <h2 class="text-3xl font-bold text-blue-500">📋 Dashboard Mitra</h2>
-    {% if toko %}
-    <a href="{% url 'toko:tambah_produk' %}"
-       class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow transition">
-       Tambah Produk
-    </a>
-    {% endif %}
-  </div>
-
-  {% if toko %}
-  <div class="bg-white rounded-2xl shadow-lg overflow-x-auto border border-blue-100">
-    <table class="min-w-full text-md text-left text-gray-700">
-      <thead class="bg-blue-100 text-blue-800 uppercase text-md sticky top-0 z-10">
-        <tr>
-          <th class="px-6 py-4">Foto</th>
-          <th class="px-6 py-4">Nama Produk</th>
-          <th class="px-6 py-4">Harga</th>
-          <th class="px-6 py-4">Status</th>
-          <th class="px-6 py-4 text-right">Aksi</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-blue-50 bg-white">
-        {% for p in produk %}
-        <tr class="hover:bg-blue-50 transition">
-          <td class="px-6 py-4">
-            {% if p.foto_produk %}
-              <img src="{{ p.foto_produk.url }}" alt="{{ p.nama }}"
-                   class="h-12 rounded cursor-pointer ring-2 ring-blue-100 hover:ring-blue-400 transition"
-                   onclick="showImageModal('{{ p.foto_produk.url }}')">
+    <div class="w-full pt-28 sm:pt-32 pb-16 px-4 sm:px-6 lg:px-8">
+        <div class="w-full max-w-7xl mx-auto bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-6 md:p-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 border-b border-slate-700 pb-6">
+                <div>
+                    <h1 class="text-3xl font-bold text-white">📋 Dashboard Mitra</h1>
+                    <p class="text-slate-300 mt-1">Kelola produk dan toko Anda di sini.</p>
+                </div>
+                {% if toko %}
+                    <a href="{% url 'toko:tambah_produk' %}"
+                       class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-lg shadow-lg transition-all duration-300 hover:shadow-blue-500/50">
+                        <svg class="w-5 h-5"
+                             xmlns="http://www.w3.org/2000/svg"
+                             viewBox="0 0 20 20"
+                             fill="currentColor">
+                            <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                        </svg>
+                        Tambah Produk
+                    </a>
+                {% endif %}
+            </div>
+            {% if toko %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm text-left text-slate-300">
+                        <thead class="border-b border-slate-700 text-xs uppercase text-slate-400">
+                            <tr>
+                                <th class="px-6 py-4">Foto</th>
+                                <th class="px-6 py-4">Nama Produk</th>
+                                <th class="px-6 py-4">Harga</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800">
+                            {% for p in produk %}
+                                <tr class="hover:bg-slate-800/50 transition-colors">
+                                    <td class="px-6 py-4">
+                                        {% if p.foto_produk %}
+                                            <img src="{{ p.foto_produk.url }}"
+                                                 alt="{{ p.nama }}"
+                                                 class="h-12 w-12 object-cover rounded-lg cursor-pointer ring-2 ring-slate-700 hover:ring-blue-500 transition"
+                                                 onclick="showImageModal('{{ p.foto_produk.url }}')">
+                                        {% else %}
+                                            <div class="h-12 w-12 bg-slate-700 rounded-lg flex items-center justify-center text-slate-500 text-xs">Foto</div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-6 py-4 font-medium text-white">{{ p.nama }}</td>
+                                    <td class="px-6 py-4">Rp{{ p.harga|floatformat:0|intcomma }}</td>
+                                    <td class="px-6 py-4">
+                                        {% if p.is_active %}
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-300">Aktif</span>
+                                        {% else %}
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-500/20 text-red-300">Nonaktif</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-6 py-4 text-right space-x-2">
+                                        <a href="{% url 'toko:edit_produk' p.pk %}"
+                                           class="inline-block text-yellow-400 hover:text-yellow-300 p-2 rounded-md hover:bg-slate-700 transition-colors"
+                                           title="Edit">
+                                            <svg class="w-5 h-5"
+                                                 xmlns="http://www.w3.org/2000/svg"
+                                                 viewBox="0 0 20 20"
+                                                 fill="currentColor">
+                                                <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+                                                <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" />
+                                            </svg>
+                                        </a>
+                                        <a href="{% url 'toko:hapus_produk' p.pk %}"
+                                           class="inline-block text-red-500 hover:text-red-400 p-2 rounded-md hover:bg-slate-700 transition-colors"
+                                           title="Hapus">
+                                            <svg class="w-5 h-5"
+                                                 xmlns="http://www.w3.org/2000/svg"
+                                                 viewBox="0 0 20 20"
+                                                 fill="currentColor">
+                                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                            </svg>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-16 text-slate-400 italic">
+                                        Anda belum memiliki produk. Silakan klik tombol "Tambah Produk" di atas.
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             {% else %}
-              <span class="text-gray-400 italic">Tidak ada foto</span>
+                <div class="text-center py-16">
+                    <svg class="mx-auto h-16 w-16 text-blue-400"
+                         xmlns="http://www.w3.org/2000/svg"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke-width="1.5"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h2.64m-13.5 0L12 18.75m-2.64 2.25L5.25 18.75m10.5 2.25L15.75 18.75m0 0A2.25 2.25 0 0113.5 21m2.25-2.25A2.25 2.25 0 0018 21m-12.75 0A2.25 2.25 0 015.25 21m2.25-2.25A2.25 2.25 0 003 21m12.75 0v-2.25A2.25 2.25 0 0013.5 16.5h-3a2.25 2.25 0 00-2.25 2.25V21" />
+                    </svg>
+                    <h3 class="mt-4 text-2xl font-semibold text-white">Anda Belum Memiliki Toko</h3>
+                    <p class="mt-2 text-md text-slate-300">Untuk mulai menjual produk, Anda perlu membuat toko terlebih dahulu.</p>
+                    <a href="{% url 'toko:tambah_toko' %}"
+                       class="mt-6 inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-all duration-300 hover:shadow-blue-500/50">
+                        Buka Toko Gratis
+                    </a>
+                </div>
             {% endif %}
-          </td>
-          <td class="px-6 py-4 font-medium">{{ p.nama }}</td>
-          <td class="px-6 py-4">Rp{{ p.harga|floatformat:0|intcomma }}</td>
-          <td class="px-6 py-4">
-            {% if p.is_active %}
-              <span class="text-green-600 font-semibold">Aktif</span>
-            {% else %}
-              <span class="text-red-500 font-semibold">Nonaktif</span>
-            {% endif %}
-          </td>
-          <td class="px-6 py-4 text-right space-x-2">
-            <a href="{% url 'toko:edit_produk' p.pk %}"
-               class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-lg shadow">
-               Edit
-            </a>
-            <a href="{% url 'toko:hapus_produk' p.pk %}"
-               class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg shadow">
-               Hapus
-            </a>
-          </td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="5" class="text-center py-6 text-gray-500 italic">
-            Belum ada produk.
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-  {% else %}
-  <div class="bg-blue-50 border border-blue-200 text-blue-700 rounded-2xl shadow-lg p-6 text-center animate-fadeInUp transition-all duration-500">
-    <div class="flex flex-col items-center gap-4">
-      <p class="text-lg font-medium">
-        ⚠️ Anda belum memiliki toko.
-      </p>
-      <a href="{% url 'toko:tambah_toko' %}"
-         class="inline-flex items-center gap-2 bg-blue-400 hover:bg-blue-500 text-white text-sm font-semibold px-5 py-2 rounded-full shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg">
-        Buat Toko Sekarang
-      </a>
+        </div>
     </div>
-  </div>
-  {% endif %}
-
-</div>
-
-<!-- Modal Preview Gambar -->
-<div id="imageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 hidden">
-  <div class="relative max-w-3xl mx-auto animate-fade-in">
-    <button onclick="closeImageModal()"
-            class="absolute top-2 right-2 bg-white rounded-full p-1 shadow-md hover:bg-gray-100 z-50">
-      ❌
-    </button>
-    <img id="modalImage" src="" class="max-h-[90vh] rounded-lg shadow-lg">
-  </div>
-</div>
+    <div id="imageModal"
+         class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 backdrop-blur-sm hidden animate-fadeInUp">
+        <div class="relative max-w-4xl max-h-[90vh] mx-auto">
+            <button onclick="closeImageModal()"
+                    class="absolute -top-4 -right-4 bg-white rounded-full p-2 shadow-lg hover:bg-gray-200 z-50 transition transform hover:scale-110">
+                <svg class="w-6 h-6 text-gray-800"
+                     xmlns="http://www.w3.org/2000/svg"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <img id="modalImage"
+                 src=""
+                 class="max-h-[90vh] object-contain rounded-lg shadow-2xl">
+        </div>
+    </div>
 {% endblock %}
-
 {% block extra_scripts %}
-<script>
+    <script>
   function showImageModal(imageUrl) {
     const modal = document.getElementById('imageModal');
     const img = document.getElementById('modalImage');
@@ -110,9 +145,7 @@
 
   function closeImageModal() {
     const modal = document.getElementById('imageModal');
-    const img = document.getElementById('modalImage');
-    if (modal && img) {
-      img.src = '';
+    if (modal) {
       modal.classList.add('hidden');
     }
   }
@@ -120,13 +153,19 @@
   document.addEventListener("DOMContentLoaded", function () {
     const modal = document.getElementById('imageModal');
     if (modal) {
+      // Menutup modal jika klik di area luar gambar
       modal.addEventListener('click', function (e) {
         if (e.target === modal) {
           closeImageModal();
         }
       });
+      // Menutup modal jika menekan tombol Escape
+      document.addEventListener('keydown', function (e) {
+        if (e.key === "Escape") {
+          closeImageModal();
+        }
+      });
     }
   });
-</script>
+    </script>
 {% endblock %}
-

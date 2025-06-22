@@ -1,74 +1,67 @@
 {% extends "base.html" %}
 {% load static %}
+{% block title %}Akun Menunggu Verifikasi - MountInfo{% endblock %}
+{# Kosongkan hero block agar halaman langsung menampilkan panel di tengah #}
+{% block hero_content %}
+{% endblock hero_content %}
 {% block content %}
-    <main class="relative min-h-screen">
-        <!-- Hero Slider -->
-        <section class="relative h-screen"
-                 x-data="{ currentSlide: 0, slides: [ '{% static 'images/bg-hero1.jpg' %}', '{% static 'images/bg-hero2.jpg' %}', '{% static 'images/bg-hero3.jpg' %}' ] }"
-                 x-init="setInterval(() => currentSlide = (currentSlide + 1) % slides.length, 5000)">
-            <!-- Background Image -->
-            <div class="absolute top-0 left-0 w-full h-full bg-cover bg-center transition-all duration-1000"
-                 :style="'background-image: url(' + slides[currentSlide] + ')'"></div>
-            <!-- Overlay -->
-            <div class="absolute inset-0 bg-black bg-opacity-30 z-0 backdrop-blur-sm"></div>
-            <!-- Verification Box -->
-            <div class="relative z-10 flex justify-center items-center h-full px-4">
-                <div class="bg-white bg-opacity-90 backdrop-blur-md p-8 rounded-3xl shadow-2xl w-full max-w-md animate-fadeInUp">
-                    <!-- Icon & Title -->
-                    <div class="flex flex-col items-center justify-center gap-3 mb-6">
-                        <div class="bg-blue-100 p-4 rounded-full shadow-md">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 class="h-10 w-10 text-blue-400 animate-pulse"
-                                 fill="none"
-                                 viewBox="0 0 24 24"
-                                 stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
-                            </svg>
-                        </div>
-                        <h2 class="text-2xl font-bold text-blue-400 text-center">Akunmu Menunggu Verifikasi</h2>
+    <div class="w-full min-h-screen flex items-center justify-center pt-20 pb-16 px-4">
+        <div class="w-full max-w-lg bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-8 md:p-10 text-center">
+            <div class="flex flex-col items-center justify-center">
+                <div class="bg-yellow-500/20 p-4 rounded-full border-2 border-yellow-500/30">
+                    <svg class="h-12 w-12 text-yellow-300 animate-pulse"
+                         xmlns="http://www.w3.org/2000/svg"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke-width="1.5"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                    </svg>
+                </div>
+                <h2 class="text-3xl font-bold text-white mt-6">Akun Anda Menunggu Verifikasi</h2>
+            </div>
+            <p class="text-center text-slate-300 leading-relaxed mt-4">
+                Terima kasih telah mendaftar sebagai <span class="font-semibold text-white">Mitra</span> di MountInfo!
+                <br>
+                Untuk mengaktifkan akun, silakan selesaikan pembayaran dan konfirmasi ke admin.
+            </p>
+            <div class="mt-8 bg-slate-800/50 border border-slate-700 rounded-xl p-5 text-left text-sm space-y-3">
+                <div class="flex items-start gap-3">
+                    <span class="text-slate-400 mt-0.5">💳</span>
+                    <div>
+                        <p class="font-medium text-slate-400">Biaya Pendaftaran</p>
+                        <p class="font-bold text-lg text-white">Rp 50.000</p>
                     </div>
-                    <!-- Description -->
-                    <p class="text-center text-gray-600 text-base leading-relaxed">
-                        Terima kasih sudah mendaftar sebagai <span class="font-semibold text-blue-500">Mitra</span> 🌟
-                        <br>
-                        Untuk mengaktifkan akunmu, silakan lakukan pembayaran biaya pendaftaran.
-                    </p>
-                    <!-- Payment Info -->
-                    <div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-gray-700 shadow-inner">
-                        <p class="mb-2">
-                            <span class="font-medium">💳 Biaya Pendaftaran:</span> Rp 50.000
-                        </p>
-                        <p class="mb-2">
-                            <span class="font-medium">🏦 Transfer ke:</span> BCA 1234567890 a.n. Admin MountInfo
-                        </p>
-                        <p>
-                            <span class="font-medium">📸 Kirim bukti transfer ke Admin</span>
-                        </p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-slate-400 mt-0.5">🏦</span>
+                    <div>
+                        <p class="font-medium text-slate-400">Transfer ke Rekening</p>
+                        <p class="font-bold text-white">BCA 1234567890 (a.n. Admin MountInfo)</p>
                     </div>
-                    <!-- WhatsApp Button -->
-                    <div class="mt-4 flex justify-center">
-                        <a href="https://wa.me/6281234567890?text=Halo%20Admin,%20Saya%20ingin%20mengaktifkan%20akun%20mitra%20MountInfo%20dan%20sudah%20melakukan%20pembayaran."
-                           target="_blank"
-                           class="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-black px-4 py-2 rounded-full text-sm font-medium shadow-lg transition duration-300 hover:scale-105">
-                            <svg class="w-4 h-4 fill-current" viewBox="0 0 32 32">
-                                <path d="M16.003 2.003c-7.732 0-14 6.268-14 14 0 2.464.643 4.863 1.866 6.988l-1.957 7.012 7.177-1.882c2.015 1.081 4.29 1.651 6.914 1.651 7.732 0 14-6.268 14-14s-6.268-14-14-14zm0 2c6.627 0 12 5.373 12 12 0 6.628-5.373 12-12 12-2.317 0-4.465-.656-6.314-1.794l-.45-.28-4.252 1.116 1.158-4.184-.292-.456c-1.07-1.672-1.65-3.6-1.65-5.402 0-6.627 5.373-12 12-12zm5.973 15.396c-.259-.13-1.527-.756-1.764-.843-.237-.088-.41-.13-.583.13s-.67.843-.821 1.015c-.151.173-.303.195-.562.065-.259-.13-1.094-.403-2.085-1.285-.77-.686-1.29-1.53-1.44-1.789-.151-.26-.016-.4.114-.529.117-.117.26-.303.39-.454.13-.15.173-.259.26-.432.086-.173.043-.325-.022-.454-.065-.13-.583-1.406-.799-1.931-.21-.505-.423-.436-.583-.443l-.5-.009c-.173 0-.454.065-.692.303s-.91.89-.91 2.173c0 1.283.932 2.522 1.061 2.693.13.173 1.833 2.798 4.44 3.922.62.267 1.104.427 1.48.545.622.198 1.19.17 1.637.103.5-.074 1.527-.623 1.743-1.225.216-.601.216-1.116.151-1.225-.065-.108-.237-.173-.496-.303z" />
-                            </svg>
-                            Hubungi Admin via WhatsApp
-                        </a>
-                    </div>
-                    <!-- Info -->
-                    <div class="mt-6 text-sm text-center text-gray-500 italic">
-                        Admin akan memverifikasi akunmu setelah pembayaran dikonfirmasi.
-                    </div>
-                    <!-- Back Button -->
-                    <div class="mt-6 flex justify-center">
-                        <a href="{% url 'gunung:home' %}"
-                           class="bg-blue-400 hover:bg-blue-500 text-white font-medium px-6 py-2 rounded-full shadow-md transition duration-300">
-                            Kembali ke Beranda
-                        </a>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-slate-400 mt-0.5">📸</span>
+                    <div>
+                        <p class="font-medium text-slate-400">Konfirmasi Pembayaran</p>
+                        <p class="font-bold text-white">Kirim bukti transfer ke Admin via WhatsApp.</p>
                     </div>
                 </div>
             </div>
-        </section>
-    </main>
+            <div class="mt-8 flex flex-col sm:flex-row-reverse gap-4">
+                <a href="https://wa.me/6281234567890?text=Halo%20Admin,%20Saya%20ingin%20mengaktifkan%20akun%20mitra%20MountInfo%20dan%20sudah%20melakukan%20pembayaran."
+                   target="_blank"
+                   class="flex-1 inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-all duration-300 hover:shadow-green-500/50">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52s-.67-.816-.916-.966c-.247-.149-.494-.15-.67-.15-.177 0-.375-.025-.574-.025-.198 0-.523.074-.79.372-.267.297-1.03.996-1.03 2.436 0 1.44 1.055 2.823 1.203 3.02.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.075 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+                    </svg>
+                    Hubungi Admin
+                </a>
+                <a href="{% url 'gunung:home' %}"
+                   class="flex-1 inline-flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-white font-medium px-6 py-3 rounded-lg transition duration-300">
+                    Kembali ke Beranda
+                </a>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -1,104 +1,126 @@
 {% extends "base.html" %}
+{% load static %}
 {% load form_tags %}
+{% block title %}{{ gunung.nama }} - MountInfo{% endblock %}
+{# KOSONGKAN HERO BLOCK agar tidak ada area kosong di atas #}
+{% block hero_content %}
+{% endblock hero_content %}
 {% block content %}
-    <div class="max-w-4xl mx-auto px-4 py-6">
-        <!-- Header User -->
-        <div class="justify-between items-center mb-6 text-sm">
-            <div>
-                {% if user.is_authenticated %}
-                    <p>
-                        Halo, <span class="font-semibold">{{ user.username }}</span> |
-                        <a href="{% url 'accounts:logout' %}"
-                           class="text-red-600 hover:underline">Logout</a>
-                    </p>
-                {% else %}
-                    <a href="{% url 'accounts:login_user' %}" class="mr-4">🔒 Login user</a>
-                    <a href="{% url 'accounts:login_mitra' %}" class="mr-4">🔒 Login mitra</a>
+    {# Wrapper utama untuk halaman detail, memastikan konten mulai dari atas #}
+    <div class="w-full">
+        <header class="relative h-[60vh] min-h-[400px] w-full flex items-center justify-center text-center">
+            <div class="absolute inset-0">
+                <img src="{{ gunung.foto.url }}"
+                     alt="Pemandangan {{ gunung.nama }}"
+                     class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-black/60"></div>
+            </div>
+            <div class="relative z-10 px-4">
+                <nav class="text-sm text-white/80 mb-4">
+                    <a href="{% url 'gunung:home' %}" class="hover:underline">Home</a>
+                    <span>&raquo;</span>
+                    <a href="{% url 'gunung:daftar' %}" class="hover:underline">Daftar Gunung</a>
+                </nav>
+                <h1 class="text-4xl md:text-6xl font-extrabold text-white tracking-tight drop-shadow-2xl">{{ gunung.nama }}</h1>
+                <p class="mt-4 text-lg text-slate-200 max-w-2xl mx-auto drop-shadow-lg">
+                    Sebuah petualangan menanti di puncak yang megah ini.
+                </p>
+            </div>
+        </header>
+        <div class="bg-slate-900">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center border border-slate-700 bg-black/20 rounded-2xl p-6 mb-12">
+                    <div>
+                        <p class="text-sm text-slate-400">Kategori</p>
+                        <p class="text-xl font-bold text-white capitalize">{{ gunung.kategori }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-slate-400">Dilihat</p>
+                        <p class="text-xl font-bold text-white">{{ gunung.views }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-slate-400">Rating</p>
+                        <p class="text-xl font-bold text-yellow-400">{{ avg_rating|default:"N/A" }} / 5</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-slate-400">Komentar</p>
+                        <p class="text-xl font-bold text-white">{{ komentar.paginator.count }}</p>
+                    </div>
+                </div>
+                <article class="prose prose-lg prose-invert max-w-none mb-10">{{ gunung.deskripsi|safe }}</article>
+                {% if gunung.template_file %}
+                    <div class="my-10">
+                        <a href="{{ gunung.template_file.url }}"
+                           download
+                           class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 shadow-lg hover:shadow-blue-500/50">
+                            <svg class="w-5 h-5"
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 viewBox="0 0 20 20"
+                                 fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v4.59L7.3 9.7a.75.75 0 00-1.1 1.02l3.25 3.5a.75.75 0 001.1 0l3.25-3.5a.75.75 0 10-1.1-1.02l-1.95 2.1V6.75z" clip-rule="evenodd" />
+                            </svg>
+                            Download Template
+                        </a>
+                    </div>
                 {% endif %}
+                <div class="border-t border-slate-700 pt-10">
+                    <h2 class="text-3xl font-bold text-white mb-8">Komentar & Testimoni</h2>
+                    {% if user.is_authenticated %}
+                        <form method="post"
+                              class="bg-slate-800/50 border border-slate-700 p-5 rounded-xl mb-10 space-y-4">
+                            {% csrf_token %}
+                            <div>
+                                <label for="{{ form.isi.id_for_label }}"
+                                       class="block text-sm font-medium text-slate-300 mb-2">
+                                    Tulis Komentar Anda
+                                </label>
+                                {{ form.isi|add_class:"w-full bg-slate-700 text-slate-200 border-slate-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" }}
+                            </div>
+                            <div>
+                                <label for="{{ form.rating.id_for_label }}"
+                                       class="block text-sm font-medium text-slate-300 mb-2">Rating (1–5)</label>
+                                {{ form.rating|add_class:"w-24 bg-slate-700 text-slate-200 border-slate-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" }}
+                            </div>
+                            <button type="submit"
+                                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg transition font-semibold">
+                                Kirim Komentar
+                            </button>
+                        </form>
+                    {% else %}
+                        <div class="bg-slate-800 text-center p-6 rounded-xl border border-slate-700 mb-10">
+                            <p class="text-slate-300">
+                                Silakan <a href="{% url 'accounts:login_user' %}"
+    class="font-semibold text-blue-400 underline hover:text-blue-300">login</a> untuk memberi komentar dan rating.
+                            </p>
+                        </div>
+                    {% endif %}
+                    <div class="space-y-8">
+                        {% for komen in komentar %}
+                            <div class="flex items-start gap-4 p-5 bg-slate-800/50 rounded-lg border border-slate-700">
+                                <div class="flex-shrink-0 w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center font-bold text-slate-300 ring-2 ring-slate-600">
+                                    {{ komen.user.username|first|upper }}
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-white">{{ komen.user.username }}</p>
+                                    <p class="text-sm text-slate-400 mb-2">{{ komen.created_at|date:"d M Y, H:i" }}</p>
+                                    <div class="prose prose-invert max-w-none text-slate-300">{{ komen.isi|linebreaks }}</div>
+                                </div>
+                                <div class="flex-shrink-0 flex items-center gap-1 text-sm text-amber-400">
+                                    <svg class="w-4 h-4 text-amber-400"
+                                         xmlns="http://www.w3.org/2000/svg"
+                                         viewBox="0 0 20 20"
+                                         fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.305-.772 1.626 0l1.884 4.539a1 1 0 00.951.691h4.772c.836 0 1.171 1.025.568 1.54L15.4 12.348a1 1 0 00-.364 1.118l1.884 4.539c.321.772-.647 1.454-1.348 1.002L11.1 15.347a1 1 0 00-1.175 0l-4.128 2.554c-.701.452-1.67-.23-1.348-1.002l1.884-4.539a1 1 0 00-.364-1.118L2.05 9.654c-.603-.515-.268-1.54.568-1.54h4.772a1 1 0 00.951-.691l1.884-4.539z" clip-rule="evenodd" />
+                                    </svg>
+                                    <span class="font-semibold">{{ komen.rating }}</span>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p class="text-slate-500 italic text-center py-4">Belum ada komentar.</p>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
-        <!-- Navigasi -->
-        <nav class="mb-6">
-            <ul class="flex flex-wrap gap-4 text-blue-600 text-sm">
-                <li>
-                    <a href="{% url 'gunung:home' %}" class="hover:underline">Home</a>
-                </li>
-                <li>
-                    <a href="{% url 'gunung:daftar' %}" class="hover:underline">Daftar Gunung</a>
-                </li>
-            </ul>
-        </nav>
-        <!-- Detail Gunung -->
-        <h1 class="text-3xl font-bold mb-2">{{ gunung.nama }}</h1>
-        <img src="{{ gunung.foto.url }}"
-             alt="{{ gunung.nama }}"
-             class="w-full max-h-[400px] object-cover rounded-xl my-4 shadow">
-        <!-- Deskripsi -->
-        <div class="prose lg:prose-lg max-w-none mb-8">{{ gunung.deskripsi|safe }}</div>
-        {% if gunung.template_file %}
-            <a href="{{ gunung.template_file.url }}"
-               download
-               class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded inline-block mt-4 mb-4">
-                📄 Download Template Pendakian
-            </a>
-        {% else %}
-            <p class="text-gray-500 italic mt-4 mb-4">Belum ada template pendakian tersedia.</p>
-        {% endif %}
-        <p class="text-sm text-gray-500">Pengunjung: {{ gunung.views }}</p>
-        <!-- Komentar & Testimoni -->
-        <h2 class="text-2xl font-semibold mt-10 mb-4">Komentar & Testimoni</h2>
-        {% for komen in komentar %}
-            <div class="bg-white p-4 rounded-lg shadow mb-4">
-                <div class="flex justify-between items-center mb-1">
-                    <p class="font-semibold text-blue-800">{{ komen.user.username }}</p>
-                    <span class="text-sm text-yellow-600">{{ komen.rating }}/5</span>
-                </div>
-                <p class="mb-1 text-gray-700">{{ komen.isi }}</p>
-                <p class="text-xs text-gray-500">{{ komen.created_at|date:"d M Y H:i" }}</p>
-            </div>
-        {% empty %}
-            <p class="text-gray-500 italic">Belum ada komentar.</p>
-        {% endfor %}
-        <!-- Pagination -->
-        {% if komentar.has_other_pages %}
-            <div class="flex gap-2 justify-center items-center my-6">
-                {% if komentar.has_previous %}
-                    <a href="?page={{ komentar.previous_page_number }}"
-                       class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Sebelumnya</a>
-                {% endif %}
-                <span class="px-3 py-1 bg-indigo-500 text-white rounded">{{ komentar.number }}</span>
-                {% if komentar.has_next %}
-                    <a href="?page={{ komentar.next_page_number }}"
-                       class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Berikutnya</a>
-                {% endif %}
-            </div>
-        {% endif %}
-        <!-- Form Komentar -->
-        {% if user.is_authenticated %}
-            <h3 class="text-lg font-medium mt-8 mb-4">Tambahkan Komentar</h3>
-            <form method="post" class="space-y-4">
-                {% csrf_token %}
-                <div>
-                    <label for="{{ form.isi.id_for_label }}"
-                           class="block text-sm font-medium text-gray-700">Komentar</label>
-                    {{ form.isi|add_class:"w-full mt-1 border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm" }}
-                </div>
-                <div>
-                    <label for="{{ form.rating.id_for_label }}"
-                           class="block text-sm font-medium text-gray-700">Rating (1–5)</label>
-                    {{ form.rating|add_class:"w-20 mt-1 border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm" }}
-                </div>
-                <button type="submit"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg transition">Kirim</button>
-            </form>
-        {% else %}
-            <p class="mt-6">
-                Silakan
-                <a href="{% url 'accounts:login_user' %}"
-                   class="text-blue-600 underline hover:text-blue-800">login</a> untuk memberi komentar.
-            </p>
-        {% endif %}
-        <!-- Rating Rata-Rata -->
-        <p class="mt-8 text-yellow-700 text-lg font-semibold">Rata-rata rating: {{ avg_rating }} / 5</p>
     </div>
 {% endblock content %}

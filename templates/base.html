@@ -1,84 +1,59 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>
-            {% block title %}{% endblock %}
+            {% block title %}MountInfo{% endblock %}
         </title>
-        <!-- Tailwind CSS -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap"
+              rel="stylesheet">
         <link rel="stylesheet" href="{% static 'src/output.css' %}" />
-        <!-- Leaflet -->
         <link rel="stylesheet"
               href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-        <!-- Tambahan Style -->
+        <script defer src="https://unpkg.com/alpinejs@3.12.0/dist/cdn.min.js"></script>
         <style>
-      .cloud {
-        position: absolute;
-        width: 50px;
-        height: 30px;
-        background-color: #f0f9ff;
-        border-radius: 50%;
-        box-shadow:
-          10px 0px 0 0 #f0f9ff,
-          20px 0px 0 0 #f0f9ff,
-          5px -10px 0 0 #f0f9ff,
-          15px -10px 0 0 #f0f9ff;
-        animation: floatUp 2s ease-out forwards;
-        pointer-events: none;
-      }
-
-      @keyframes floatUp {
-        0% {
-          opacity: 1;
-          transform: translateY(0) scale(1);
-        }
-        100% {
-          opacity: 0;
-          transform: translateY(-100px) scale(1.3);
-        }
-      }
-
-      @keyframes fadeInUp {
-        0% {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        100% {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .animate-fadeInUp {
-        animation: fadeInUp 1s ease forwards;
-      }
-      .delay-300 {
-        animation-delay: 0.3s;
-      }
-
-      [x-cloak] {
-        display: none !important;
-      } /* ini penting! */
+            body { font-family: 'Nunito Sans', sans-serif; }
+            [x-cloak] { display: none !important; }
+            @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-fadeInUp { animation: fadeInUp 1s ease-out forwards; }
         </style>
+        {% block extra_styles %}{% endblock %}
     </head>
-    {% block extra_scripts %}{% endblock %}
-    <body>
+    {# PERUBAHAN 1: Tambahkan class 'flex flex-col min-h-screen' pada body #}
+    <body x-data="{ scrolled: window.pageYOffset > 50 }"
+          @scroll.window="scrolled = (window.pageYOffset > 50)"
+          class="bg-slate-900 text-slate-800 flex flex-col min-h-screen">
+        <div class="fixed top-0 left-0 w-full h-full -z-10"
+             x-data="{ currentSlide: 0, slides: [ '{% static 'images/bg-hero1.jpg' %}', '{% static 'images/bg-hero2.jpg' %}', '{% static 'images/bg-hero3.jpg' %}' ] }"
+             x-init="setInterval(() => currentSlide = (currentSlide + 1) % slides.length, 5000)">
+            <template x-for="(slide, index) in slides" :key="index">
+                <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
+                     :style="'background-image: url(' + slide + ')'"
+                     x-show="currentSlide === index"
+                     x-transition></div>
+            </template>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+        </div>
         {% include "navbar.html" %}
-        {% block content %}{% endblock %}
+        {# PERUBAHAN 2: Tambahkan class 'flex-grow' pada main #}
+        <main class="flex-grow">
+            {% block hero_content %}
+                <div class="relative z-20 flex flex-col justify-center items-center text-white text-center min-h-screen pt-28 pb-12 px-6">
+                    <h1 class="text-4xl font-bold">Jelajahi Dunia, Mulai Dari Sini</h1>
+                </div>
+            {% endblock hero_content %}
+            {% block content %}{% endblock %}
+        </main>
         {% include "footer.html" %}
-        <script>
-      // efek klik awan
-      document.addEventListener("click", function (e) {
-        const cloud = document.createElement("div");
-        cloud.className = "cloud";
-        cloud.style.left = `${e.pageX - 30}px`;
-        cloud.style.top = `${e.pageY - 20}px`;
-        document.body.appendChild(cloud);
-        setTimeout(() => cloud.remove(), 2000);
-      });
-        </script>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        {% block extra_scripts %}
+        {% endblock %}
     </body>
 </html>

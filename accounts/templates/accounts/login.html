@@ -1,44 +1,49 @@
 {% extends "base.html" %}
 {% load static %}
 {% load form_tags %}
+{% block title %}{{ title|default:"Login" }} - MountInfo{% endblock %}
+{# Kosongkan hero block agar halaman langsung menampilkan form di tengah #}
+{% block hero_content %}
+{% endblock hero_content %}
 {% block content %}
-    <section class="relative h-screen"
-             x-data="{ currentSlide: 0, slides: [ '{% static 'images/bg-hero1.jpg' %}', '{% static 'images/bg-hero2.jpg' %}', '{% static 'images/bg-hero3.jpg' %}' ] }"
-             x-init="setInterval(() => currentSlide = (currentSlide + 1) % slides.length, 5000)">
-        <!-- Background Slider -->
-        <div class="absolute top-0 left-0 w-full h-full bg-cover bg-center transition-all duration-1000 z-0"
-             :style="'background-image: url(' + slides[currentSlide] + ')'"></div>
-        <!-- Overlay -->
-        <div class="absolute inset-0 bg-black bg-opacity-40 z-0"></div>
-        <!-- Form Card -->
-        <div class="relative z-10 flex justify-center items-start h-full px-4 pt-12 md:pt-52">
-            <div class="w-full max-w-md p-8 bg-white shadow-2xl rounded-3xl border border-blue-200 animate-fadeInUp">
-                <h2 class="text-3xl font-extrabold text-center text-blue-600 mb-6 drop-shadow-sm">{{ title|default:"Login" }}</h2>
-                <!-- Pesan error -->
-                {% if messages %}
+    <div class="w-full min-h-screen flex items-center justify-center pt-20 pb-16 px-4">
+        <div class="w-full max-w-md bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-8 md:p-10">
+            <div class="text-center mb-8">
+                <a href="{% url 'gunung:home' %}"
+                   class="inline-block text-3xl font-extrabold text-white tracking-wider drop-shadow-lg mb-2">
+                    🏕️ MountInfo
+                </a>
+                <h2 class="text-2xl font-bold text-white">{{ title|default:"Login" }}</h2>
+            </div>
+            {% if messages %}
+                <div class="space-y-2 mb-6">
                     {% for message in messages %}
-                        <div class="mb-4 px-4 py-2 rounded-lg bg-red-100 text-red-700 text-sm shadow">{{ message }}</div>
+                        <div class="px-4 py-3 rounded-lg bg-red-500/20 text-red-300 text-sm border border-red-500/30">{{ message }}</div>
                     {% endfor %}
-                {% endif %}
-                <form method="post" class="space-y-5">
-                    {% csrf_token %}
-                    {% for field in form %}
-                        <div>
-                            <label class="block text-sm font-medium text-gray-600 mb-1">{{ field.label }}</label>
-                            {{ field|add_class:"w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all duration-200" }}
-                            {% if field.errors %}<p class="text-sm text-red-500 mt-1">{{ field.errors.0 }}</p>{% endif %}
-                        </div>
-                    {% endfor %}
+                </div>
+            {% endif %}
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div>
+                        <label for="{{ field.id_for_label }}"
+                               class="block text-sm font-medium text-slate-300 mb-2">{{ field.label }}</label>
+                        {{ field|add_class:"w-full bg-slate-800/70 text-white placeholder-slate-400 border border-slate-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 rounded-lg px-4 py-2.5 outline-none transition" }}
+                        {% if field.errors %}<p class="text-sm text-red-400 mt-2">{{ field.errors.0 }}</p>{% endif %}
+                    </div>
+                {% endfor %}
+                <div class="pt-2">
                     <button type="submit"
-                            class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-xl shadow-md transition-all duration-300">
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-lg transition-all duration-300 hover:shadow-blue-500/50">
                         Login
                     </button>
-                </form>
-                <div class="text-sm text-center mt-4 text-gray-600">
-                    Belum punya akun? <a href="{% url 'accounts:register_user' %}"
-    class="text-blue-600 hover:underline">Daftar sekarang</a>
                 </div>
+            </form>
+            <div class="text-sm text-center mt-6 text-slate-400">
+                Belum punya akun?
+                <a href="{% url 'accounts:register_user' %}"
+                   class="font-semibold text-blue-400 hover:underline hover:text-blue-300">Daftar sekarang</a>
             </div>
         </div>
-    </section>
+    </div>
 {% endblock %}

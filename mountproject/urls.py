@@ -30,4 +30,5 @@ urlpatterns = [
         path('ckeditor/', include('ckeditor_uploader.urls')),
         path('toko/', include('toko.urls')),
         path('feedback/', include('feedback.urls')),
+        path('informasi/', include('informasi.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
