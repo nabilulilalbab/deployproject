@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
-import dj_database_url
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -25,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
-# SECRET_KEY = 'django-insecure-s0_r&ua-f@#fn-jt(l5mq=sj$0!7pe__s=y7og559_5@!#yr!z'
+# SECRET_KEY = '9bp2$ladk5^pf8y!+5kid4w65uhmag^i=_&g-s-!g6&87mkbxb'
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1',
     'http://localhost',
