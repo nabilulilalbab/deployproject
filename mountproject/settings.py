@@ -28,12 +28,13 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1',
     'http://localhost',
-    'https://deployproject-production-e7b4.up.railway.app'
+    'https://deployproject-production-e7b4.up.railway.app',
+    'http://mountrent.my.id/'
 ]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "*","deployproject-production-e7b4.up.railway.app"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "*","deployproject-production-e7b4.up.railway.app", "mountrent.my.id"]
 
 
 # Application definition
