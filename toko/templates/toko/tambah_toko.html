@@ -11,6 +11,7 @@
 {% block hero_content %}
 {% endblock hero_content %}
 {% block content %}
+    <div class="fixed inset-0 bg-slate-900 -z-10"></div>
     <div class="w-full pt-28 sm:pt-32 pb-16 px-4 sm:px-6 lg:px-8">
         <div class="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8 items-start">
             <div class="w-full lg:w-2/3 bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-6 md:p-8">
@@ -69,78 +70,73 @@
 {% block extra_scripts %}
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-document.addEventListener("DOMContentLoaded", () => {
-    // === Inisialisasi Peta Leaflet ===
-    const map = L.map('map').setView([-2.5489, 118.0149], 5); // Set view awal ke tengah Indonesia
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-    let marker;
+    document.addEventListener("DOMContentLoaded", () => {
+        const map = L.map('map').setView([-2.5489, 118.0149], 5);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        let marker;
 
-    function setMarker(lat, lng) {
-        if (marker) {
-            map.removeLayer(marker);
+        function setMarker(lat, lng) {
+            if (marker) {
+                map.removeLayer(marker);
+            }
+            marker = L.marker([lat, lng]).addTo(map);
+            map.setView([lat, lng], 15);
+            document.getElementById('id_latitude').value = lat.toFixed(6);
+            document.getElementById('id_longitude').value = lng.toFixed(6);
         }
-        marker = L.marker([lat, lng]).addTo(map);
-        map.setView([lat, lng], 15); // Zoom lebih dekat saat marker di-set
-        document.getElementById('id_latitude').value = lat.toFixed(6);
-        document.getElementById('id_longitude').value = lng.toFixed(6);
-    }
 
-    map.on('click', (e) => setMarker(e.latlng.lat, e.latlng.lng));
+        map.on('click', (e) => setMarker(e.latlng.lat, e.latlng.lng));
 
-    // Membuat fungsi setCurrentLocation bisa diakses global dari HTML
-    window.setCurrentLocation = function () {
-        if (!navigator.geolocation) {
-            alert("Geolocation tidak didukung di browser Anda.");
-            return;
-        }
-        navigator.geolocation.getCurrentPosition(
-            (position) => setMarker(position.coords.latitude, position.coords.longitude),
-            (err) => alert("Gagal mendapatkan lokasi: " + err.message)
-        );
-    };
+        window.setCurrentLocation = function () {
+            if (!navigator.geolocation) {
+                alert("Geolocation tidak didukung di browser Anda.");
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(
+                (position) => setMarker(position.coords.latitude, position.coords.longitude),
+                (err) => alert("Gagal mendapatkan lokasi: " + err.message)
+            );
+        };
 
+        const helpTextElement = document.getElementById("help-text");
+        const defaultHelpText = "Arahkan kursor atau klik salah satu kolom isian untuk melihat petunjuk di sini.";
 
-    // === Fungsionalitas Petunjuk Interaktif ===
-    const helpTextElement = document.getElementById("help-text");
-    const defaultHelpText = "Arahkan kursor atau klik salah satu kolom isian untuk melihat petunjuk di sini.";
+        const instructions = {
+            '{{ form.nama.id_for_label }}': "Masukkan nama toko Anda yang unik dan mudah diingat. Contoh: 'Bromo Adventure Rent'.",
+            '{{ form.alamat.id_for_label }}': "Tulis alamat lengkap dan jelas agar pelanggan mudah menemukan lokasi Anda.",
+            '{{ form.kabupaten.id_for_label }}': "Isi dengan nama kabupaten atau kota lokasi toko Anda. Ini akan membantu dalam pencarian.",
+            'map': "Klik pada peta untuk menentukan titik lokasi toko Anda secara akurat, atau gunakan tombol 'Gunakan Lokasi Saya'."
+        };
 
-    const instructions = {
-        '{{ form.nama.id_for_label }}': "Masukkan nama toko Anda yang unik dan mudah diingat. Contoh: 'Bromo Adventure Rent'.",
-        '{{ form.alamat.id_for_label }}': "Tulis alamat lengkap dan jelas agar pelanggan mudah menemukan lokasi Anda.",
-        '{{ form.kabupaten.id_for_label }}': "Isi dengan nama kabupaten atau kota lokasi toko Anda. Ini akan membantu dalam pencarian.",
-        'map': "Klik pada peta untuk menentukan titik lokasi toko Anda secara akurat, atau gunakan tombol 'Gunakan Lokasi Saya'."
-    };
-
-    Object.keys(instructions).forEach(id => {
-        const element = document.getElementById(id);
-        if (element) {
-            element.addEventListener("focus", () => {
-                helpTextElement.style.opacity = '0';
-                setTimeout(() => {
-                    helpTextElement.innerText = instructions[id];
-                    helpTextElement.style.opacity = '1';
-                }, 150);
-            });
-            // Khusus untuk peta, kita gunakan 'click'
-            if (id === 'map') {
-                 element.addEventListener("click", () => {
-                     helpTextElement.style.opacity = '0';
-                     setTimeout(() => {
+        Object.keys(instructions).forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener("focus", () => {
+                    helpTextElement.style.opacity = '0';
+                    setTimeout(() => {
                         helpTextElement.innerText = instructions[id];
                         helpTextElement.style.opacity = '1';
                     }, 150);
-                 });
-            } else {
-                 element.addEventListener("blur", () => {
-                    helpTextElement.style.opacity = '0';
-                    setTimeout(() => {
-                        helpTextElement.innerText = defaultHelpText;
-                        helpTextElement.style.opacity = '1';
-                    }, 150);
                 });
+                if (id === 'map') {
+                     element.addEventListener("click", () => {
+                         helpTextElement.style.opacity = '0';
+                         setTimeout(() => {
+                            helpTextElement.innerText = instructions[id];
+                            helpTextElement.style.opacity = '1';
+                        }, 150);
+                     });
+                } else {
+                     element.addEventListener("blur", () => {
+                        helpTextElement.style.opacity = '0';
+                        setTimeout(() => {
+                            helpTextElement.innerText = defaultHelpText;
+                            helpTextElement.style.opacity = '1';
+                        }, 150);
+                    });
+                }
             }
-        }
+        });
     });
-});
     </script>
 {% endblock %}

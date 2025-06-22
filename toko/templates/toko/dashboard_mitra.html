@@ -5,6 +5,7 @@
 {% block hero_content %}
 {% endblock hero_content %}
 {% block content %}
+    <div class="fixed inset-0 bg-slate-900 -z-10"></div>
     <div class="w-full pt-28 sm:pt-32 pb-16 px-4 sm:px-6 lg:px-8">
         <div class="w-full max-w-7xl mx-auto bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-6 md:p-8">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 border-b border-slate-700 pb-6">
@@ -134,38 +135,36 @@
 {% endblock %}
 {% block extra_scripts %}
     <script>
-  function showImageModal(imageUrl) {
-    const modal = document.getElementById('imageModal');
-    const img = document.getElementById('modalImage');
-    if (modal && img) {
-      img.src = imageUrl;
-      modal.classList.remove('hidden');
-    }
-  }
+      function showImageModal(imageUrl) {
+        const modal = document.getElementById('imageModal');
+        const img = document.getElementById('modalImage');
+        if (modal && img) {
+          img.src = imageUrl;
+          modal.classList.remove('hidden');
+        }
+      }
 
-  function closeImageModal() {
-    const modal = document.getElementById('imageModal');
-    if (modal) {
-      modal.classList.add('hidden');
-    }
-  }
+      function closeImageModal() {
+        const modal = document.getElementById('imageModal');
+        if (modal) {
+          modal.classList.add('hidden');
+        }
+      }
 
-  document.addEventListener("DOMContentLoaded", function () {
-    const modal = document.getElementById('imageModal');
-    if (modal) {
-      // Menutup modal jika klik di area luar gambar
-      modal.addEventListener('click', function (e) {
-        if (e.target === modal) {
-          closeImageModal();
+      document.addEventListener("DOMContentLoaded", function () {
+        const modal = document.getElementById('imageModal');
+        if (modal) {
+          modal.addEventListener('click', function (e) {
+            if (e.target === modal) {
+              closeImageModal();
+            }
+          });
+          document.addEventListener('keydown', function (e) {
+            if (e.key === "Escape") {
+              closeImageModal();
+            }
+          });
         }
       });
-      // Menutup modal jika menekan tombol Escape
-      document.addEventListener('keydown', function (e) {
-        if (e.key === "Escape") {
-          closeImageModal();
-        }
-      });
-    }
-  });
     </script>
 {% endblock %}

@@ -13,6 +13,7 @@
 {% block hero_content %}
 {% endblock hero_content %}
 {% block content %}
+    <div class="fixed inset-0 bg-slate-900 -z-10"></div>
     <div class="w-full pt-28 sm:pt-32 pb-16 px-4 sm:px-6 lg:px-8">
         <div class="max-w-5xl mx-auto flex flex-col lg:flex-row gap-8 items-start">
             <div class="w-full lg:w-2/3 bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-6 md:p-8">
@@ -79,40 +80,37 @@
 {% endblock %}
 {% block extra_scripts %}
     <script>
-// Menggunakan metode yang lebih modern dan rapi daripada inline script
-document.addEventListener("DOMContentLoaded", () => {
-    const helpTextElement = document.getElementById("help-text");
-    const defaultHelpText = "Arahkan kursor atau klik salah satu kolom isian untuk melihat petunjuk di sini.";
+    document.addEventListener("DOMContentLoaded", () => {
+        const helpTextElement = document.getElementById("help-text");
+        const defaultHelpText = "Arahkan kursor atau klik salah satu kolom isian untuk melihat petunjuk di sini.";
 
-    const instructions = {
-        '{{ form.nama.id_for_label }}': "Masukkan nama produk yang jelas dan mudah dikenali, contoh: 'Tenda Dome Kapasitas 4 Orang'.",
-        '{{ form.deskripsi.id_for_label }}': "Jelaskan detail produk, seperti merek, kondisi, fitur unggulan, atau kelengkapan apa saja yang akan didapat penyewa.",
-        '{{ form.harga.id_for_label }}': "Isi harga sewa per hari. Masukkan hanya angka tanpa titik, koma, atau 'Rp'. Contoh: 50000.",
-        '{{ form.foto_produk.id_for_label }}': "Unggah foto produk yang asli dan memiliki pencahayaan yang baik. Foto yang menarik akan lebih cepat disewa!",
-        '{{ form.is_active.id_for_label }}': "Centang kotak ini jika produk siap untuk disewakan dan ingin ditampilkan di halaman toko Anda. Kosongkan jika stok habis atau sedang tidak tersedia."
-    };
+        const instructions = {
+            '{{ form.nama.id_for_label }}': "Masukkan nama produk yang jelas dan mudah dikenali, contoh: 'Tenda Dome Kapasitas 4 Orang'.",
+            '{{ form.deskripsi.id_for_label }}': "Jelaskan detail produk, seperti merek, kondisi, fitur unggulan, atau kelengkapan apa saja yang akan didapat penyewa.",
+            '{{ form.harga.id_for_label }}': "Isi harga sewa per hari. Masukkan hanya angka tanpa titik, koma, atau 'Rp'. Contoh: 50000.",
+            '{{ form.foto_produk.id_for_label }}': "Unggah foto produk yang asli dan memiliki pencahayaan yang baik. Foto yang menarik akan lebih cepat disewa!",
+            '{{ form.is_active.id_for_label }}': "Centang kotak ini jika produk siap untuk disewakan dan ingin ditampilkan di halaman toko Anda. Kosongkan jika stok habis atau sedang tidak tersedia."
+        };
 
-    Object.keys(instructions).forEach(id => {
-        const element = document.getElementById(id);
-        if (element) {
-            // Saat elemen di-fokus (diklik atau di-tab)
-            element.addEventListener("focus", () => {
-                helpTextElement.style.opacity = '0';
-                setTimeout(() => {
-                    helpTextElement.innerText = instructions[id];
-                    helpTextElement.style.opacity = '1';
-                }, 150); // Delay kecil untuk efek transisi
-            });
-            // Saat fokus meninggalkan elemen
-            element.addEventListener("blur", () => {
-                helpTextElement.style.opacity = '0';
-                setTimeout(() => {
-                    helpTextElement.innerText = defaultHelpText;
-                    helpTextElement.style.opacity = '1';
-                }, 150);
-            });
-        }
+        Object.keys(instructions).forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener("focus", () => {
+                    helpTextElement.style.opacity = '0';
+                    setTimeout(() => {
+                        helpTextElement.innerText = instructions[id];
+                        helpTextElement.style.opacity = '1';
+                    }, 150);
+                });
+                element.addEventListener("blur", () => {
+                    helpTextElement.style.opacity = '0';
+                    setTimeout(() => {
+                        helpTextElement.innerText = defaultHelpText;
+                        helpTextElement.style.opacity = '1';
+                    }, 150);
+                });
+            }
+        });
     });
-});
     </script>
 {% endblock %}
